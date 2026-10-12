@@ -2,7 +2,7 @@
   <div class="f-header ">
     <span class="logo">
       <el-icon class="mr-1"><eleme-filled /></el-icon>
-      帝莎编程
+      后台管理
     </span>
     <el-icon class="icon-btn">
       <Fold />
@@ -51,8 +51,13 @@
     </div>
 
   </div>
+  <!-- 修改密码抽屉 -->
   <el-drawer v-model="showDrawer" title="修改密码" size="45%" :click-on-click-modal="false">
 
+    <!-- -->
+  </el-drawer>
+  <!-- 修改密码抽屉 -->
+  <FormDrawer ref="formDrawerRef" title="修改密码" destroyonclose @submit="onSubmit">
     <el-form :model="form" :rules="rules" ref="formref" label-width="80px" size="small">
       <el-form-item prop="oldpassword" label="旧密码">
         <el-input v-model="form.oldpassword" placeholder="请输入旧密码" size="large" :prefix-icon="User">
@@ -75,12 +80,13 @@
         <el-button type="primary" class="w-full" :loading="loading" size="large" @click="onSubmit">提交</el-button>
       </el-form-item>
     </el-form>
-  </el-drawer>
+
+  </FormDrawer>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
-
+import FormDrawer from '~/components/FormDrawer.vue'
 import { useFullscreen } from '@vueuse/core'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
@@ -112,7 +118,8 @@ function handleCommand(c) {
       break;
     case 'rePassword':
       //打开修改密码抽屉
-      showDrawer.value = true
+      // showDrawer.value = true
+      formDrawerRef.value.open()
       break;
 
   }
@@ -128,7 +135,8 @@ function handleFullScreen() {
   toggle()
 }
 //抽屉修改密码
-const showDrawer = ref(false)
+
+
 
 const form = reactive({
   oldpassword: '',
@@ -137,7 +145,7 @@ const form = reactive({
 })
 
 const formref = ref(null)
-const loading = ref(false)
+
 const rules = {
   oldpassword: [
     { required: true, message: '旧密码不能为空', trigger: 'blur' }
@@ -150,13 +158,15 @@ const rules = {
     { required: true, message: '确认密码不能为空', trigger: 'blur' },
   ],
 }
+//提交修改密码
+const formDrawerRef = ref(null)
 const onSubmit = () => {
   formref.value.validate((valid) => {
     if (!valid) {
       console.log('登录验证错误')
       return false
     }
-    loading.value = true
+    formDrawerRef.value.showLoading()
     //验证通过后，调用修改密码接口
     updatePassword(form)
       .then(res => {
@@ -168,7 +178,7 @@ const onSubmit = () => {
 
       })
       .finally(() => {
-        loading.value = false
+        formDrawerRef.value.hideLoading()
       })
 
 
