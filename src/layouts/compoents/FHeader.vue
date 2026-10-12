@@ -76,9 +76,9 @@
 
         </el-input>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button type="primary" class="w-full" :loading="loading" size="large" @click="onSubmit">提交</el-button>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
   </FormDrawer>
@@ -93,24 +93,21 @@ import { useRouter } from 'vue-router'
 import { showModal, toast } from '~/composables/util'
 import { logout } from '~/api/manager'
 import { updatePassword } from '~/api/manager'
+import { useRepassword, handlelogout } from '~/composables/useManager'
 
-const store = useStore()
-const router = useRouter()
-function handleLogout() {
-  showModal('确定退出登录吗？').then(
-    res => {
-      console.log(`确定退出登录`)
-      logout().finally(() => {
-        //调用退出登录方法
-        store.dispatch("logout")
-        //跳转登录页
-        router.push('/login')
-        //提示成功
-        toast('退出登录成功')
 
-      })
-    })
-}
+
+const {
+  formDrawerRef,
+  form,
+  rules,
+  onSubmit,
+  formref,
+  openRePasswordForm
+} = useRepassword()
+const {
+  handleLogout
+} = handlelogout()
 function handleCommand(c) {
   switch (c) {
     case 'logout':
@@ -119,7 +116,8 @@ function handleCommand(c) {
     case 'rePassword':
       //打开修改密码抽屉
       // showDrawer.value = true
-      formDrawerRef.value.open()
+      openRePasswordForm()
+
       break;
 
   }
@@ -134,56 +132,9 @@ const { isFullscreen, toggle } = useFullscreen()
 function handleFullScreen() {
   toggle()
 }
-//抽屉修改密码
 
+//
 
-
-const form = reactive({
-  oldpassword: '',
-  password: '',
-  rePassword: '',
-})
-
-const formref = ref(null)
-
-const rules = {
-  oldpassword: [
-    { required: true, message: '旧密码不能为空', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '密码不能为空', trigger: 'blur' },
-
-  ],
-  rePassword: [
-    { required: true, message: '确认密码不能为空', trigger: 'blur' },
-  ],
-}
-//提交修改密码
-const formDrawerRef = ref(null)
-const onSubmit = () => {
-  formref.value.validate((valid) => {
-    if (!valid) {
-      console.log('登录验证错误')
-      return false
-    }
-    formDrawerRef.value.showLoading()
-    //验证通过后，调用修改密码接口
-    updatePassword(form)
-      .then(res => {
-        toast('修改密码成功,请重新登录')
-        //调用退出登录方法
-        store.dispatch("logout")
-        //跳转登录页
-        router.push('/login')
-
-      })
-      .finally(() => {
-        formDrawerRef.value.hideLoading()
-      })
-
-
-  })
-}
 </script>
 
 <style scoped>

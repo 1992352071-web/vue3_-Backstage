@@ -7,7 +7,7 @@
         <slot></slot>
       </div>
       <div class="actions">
-        <el-button type="primary" @click="submit">{{ confirmText }}</el-button>
+        <el-button type="primary" @click="submit" :loading="loading">{{ confirmText }}</el-button>
         <el-button type="default" @click="close">取消</el-button>
       </div>
     </div>
@@ -20,6 +20,8 @@ import { ref, defineExpose, defineProps, defineEmits } from 'vue'
 import { stringifyQuery } from 'vue-router'
 const showDrawer = ref(false)
 const loading = ref(false)
+const showLoading = () => loading.value = true
+const hideLoading = () => loading.value = false
 const props = defineProps({
   title: String,
   size: {
@@ -47,7 +49,9 @@ const submit = () => {
 //向父组件暴露方法
 defineExpose({
   open,
-  close
+  close,
+  showLoading,
+  hideLoading
 })
 </script>
 
