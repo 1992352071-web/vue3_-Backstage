@@ -29,7 +29,12 @@ service.interceptors.response.use(function (response) {
 }, function (error) {
   // 对响应错误做点什么
   const msg = error.response.data.msg || '登录失败'
-  if (msg === "非法token，请先登录！") { }
+  if (msg === "非法token，请先登录！") {
+    //调用退出登录方法
+    store.dispatch("logout")
+    location.reload()
+
+  }
   toast(error.response.data.msg || '登录失败', 'error')
   return Promise.reject(error);
 });

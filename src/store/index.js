@@ -6,13 +6,21 @@ import { setToken, clearToken } from '~/composables/auth.js'
 const store = createStore({
   state() {
     return {
-      user: {}
+      //用户信息
+      user: {},
+      //侧边宽度
+      asideWidth: `250px`
     }
   },
   mutations: {
     // 记录用户信息
     SET_USER(state, user) {
       state.user = user
+    },
+    //展开/收起侧边栏宽度
+    handleAsideWidth(state) {
+      state.asideWidth = state.asideWidth === `250px` ? `64px` : `250px`
+
     }
   },
   actions: {

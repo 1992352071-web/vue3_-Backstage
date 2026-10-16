@@ -13,6 +13,17 @@ const router = createRouter({
           meta: {
             title: '后台首页'
           }
+        },
+        {
+
+          path: '/goods/list',
+          name: 'GoodsList',
+          component: () => import('~/pages/goods/list.vue'),
+          meta: {
+            title: '商品管理'
+          }
+
+
         }
       ]
     },
@@ -28,6 +39,7 @@ const router = createRouter({
         title: '登录页'
       }
     },
+
   ]
 })
 export default router

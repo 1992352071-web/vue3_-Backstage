@@ -4,8 +4,10 @@
       <el-icon class="mr-1"><eleme-filled /></el-icon>
       后台管理
     </span>
-    <el-icon class="icon-btn">
-      <Fold />
+    <el-icon class="icon-btn" @click="$store.commit('handleAsideWidth')">
+      <!-- 展开/收起侧边栏宽度 -->
+      <Fold v-if="$store.state.asideWidth === '250px'" />
+      <Expand v-else />
     </el-icon>
     <!-- 刷新按钮 -->
     <el-tooltip class="box-item" effect="dark" content="刷新" placement="bottom">
@@ -52,12 +54,7 @@
 
   </div>
   <!-- 修改密码抽屉 -->
-  <el-drawer v-model="showDrawer" title="修改密码" size="45%" :click-on-click-modal="false">
-
-    <!-- -->
-  </el-drawer>
-  <!-- 修改密码抽屉 -->
-  <FormDrawer ref="formDrawerRef" title="修改密码" destroyonclose @submit="onSubmit">
+  <FormDrawer ref="formDrawerRef" title="修改密码" destroy-on-close @submit="onSubmit">
     <el-form :model="form" :rules="rules" ref="formref" label-width="80px" size="small">
       <el-form-item prop="oldpassword" label="旧密码">
         <el-input v-model="form.oldpassword" placeholder="请输入旧密码" size="large" :prefix-icon="User">
@@ -93,7 +90,8 @@ import { useRouter } from 'vue-router'
 import { showModal, toast } from '~/composables/util'
 import { logout } from '~/api/manager'
 import { updatePassword } from '~/api/manager'
-import { useRepassword, handlelogout } from '~/composables/useManager'
+import { useRepassword, uselogout } from '~/composables/useManager'
+
 
 
 
@@ -107,7 +105,7 @@ const {
 } = useRepassword()
 const {
   handleLogout
-} = handlelogout()
+} = uselogout()
 function handleCommand(c) {
   switch (c) {
     case 'logout':

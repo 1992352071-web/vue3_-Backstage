@@ -70,9 +70,10 @@ export function useRepassword() {
   }
 }
 
-export function handlelogout() {
+export function uselogout() {
   const store = useStore()
   const router = useRouter()
+
   function handleLogout() {
     showModal('确定退出登录吗？').then(
       res => {
