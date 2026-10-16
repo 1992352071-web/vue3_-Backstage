@@ -1,4 +1,4 @@
-import router from '~/router/index.js'
+import { router, addRoutes } from '~/router/index.js'
 import { getToken } from '~/composables/auth.js'
 
 import store from '~/store/index.js'
@@ -19,15 +19,19 @@ router.beforeEach(async (to, from, next) => {
     return next({ path: from.path })
   }
   //如果已经登录，自动获取用户信息，存储在vuex
+  let hasNewRoutes = false
   if (token) {
-    await store.dispatch('getinfo')
+    let { menus } = await store.dispatch('getinfo')
+    //动态添加路由
+    hasNewRoutes = addRoutes(menus)
   }
   //设置页面标题
   console.log(to.meta.title)
-  const title = to.meta.title?to.meta.title:''+`-后台管理系统`
+  const title = to.meta.title ? to.meta.title : '' + `-后台管理系统`
   document.title = title
+
   // 放行
-  next()
+  hasNewRoutes ? next(to.fullPath) : next()
 })
 //全局后置守卫
 router.afterEach((from, to) => {

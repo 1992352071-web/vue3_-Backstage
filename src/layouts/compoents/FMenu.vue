@@ -5,7 +5,7 @@
       class="el-menu-vertical-demo border-0" collapse-transition="false" @select="handleSelect">
       <!-- 一级菜单渲染 -->
       <template v-for="(item, index) in asideMenu" :key="index">
-        <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.name">
+        <el-sub-menu v-if="item.child && item.child.length > 0" :index="item.name">
           <template #title>
             <el-icon>
               <component :is="item.icon" />
@@ -13,7 +13,7 @@
             <span>{{ item.name }}</span>
           </template>
           <!-- 子（二级）菜单 -->
-          <el-menu-item v-for="(item2, index2) in item.children" :key="index2" :index="item2.frontpath">
+          <el-menu-item v-for="(item2, index2) in item.child" :key="index2" :index="item2.frontpath">
             <el-icon>
               <component :is="item2.icon" />
             </el-icon>
@@ -37,39 +37,21 @@ import { ref, reactive, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
-const asideMenu =
-  [
-    {
-      "name": "后台管理",
-      "icon": "help",
-      "children": [
-        {
-          "name": "主控台",
-          "frontpath": "/",
-          "icon": "home-filled"
-        },
-      ]
-    },
-    {
-      "name": "商城管理",
-      "icon": "shopping-bag",
-      "children": [
-        {
-          "name": "商品管理",
-          "frontpath": "/goods/list",
-          "icon": "shopping-cart-full"
-        },
-      ]
-    },
-  ]
+
+const store = useStore()
+
+const asideMenu = computed(() => store.state.menus)
+
+
 //点击菜单转跳方法
 // 路由器
 const router = useRouter()
 const handleSelect = (e) => {
   router.push(e)
+
 }
 //是否折叠计算属性
-const store = useStore()
+
 const isCollapse = computed(() => store.state.asideWidth === '64px')
 
 //默认选中项
@@ -87,6 +69,12 @@ const defaultActive = ref(route.path)
   bottom: 0;
   overflow-y: auto;
   overflow-x: hidden;
+
+}
+
+.f-menu::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .el-menu-vertical-demo {
