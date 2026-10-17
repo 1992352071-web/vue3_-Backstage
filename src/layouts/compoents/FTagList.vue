@@ -1,8 +1,9 @@
 <template>
   <div class="f-tag-list" :style="{ left: $store.state.asideWidth }">
-    <el-tabs v-model="editableTabsValue" type="card" class="demo-tabs" closable @tab-remove="removeTab"
+    <el-tabs @tab-change="changeTab" v-model="activeTab" type="card" class="demo-tabs" @tab-remove="removeTab"
       style="min-width: 100px;">
-      <el-tab-pane v-for="item in editableTabs" :key="item.path" :label="item.title" :name="item.path">
+      <el-tab-pane :closable="item.path !== `/`" v-for="item in tabList" :key="item.path" :label="item.title"
+        :name="item.path">
 
       </el-tab-pane>
     </el-tabs>
@@ -25,53 +26,23 @@
       </el-dropdown>
     </span>
   </div>
+  <div style="height: 44px;">
+
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useCookies } from '@vueuse/integrations/useCookies'
+const cookie = useCookies()
+
+const route = useRoute()
+const router = useRouter()
+
 let tabIndex = 2
-const editableTabsValue = ref('2')
-const editableTabs = ref([
-  {
-    title: '后台首页',
-    path: "/"
-  },
-  {
-    title: '商城管理',
-    path: "/goods/list"
-  },
-  {
-    title: '后台首页',
-    path: "/"
-  },
-  {
-    title: '商城管理',
-    path: "/goods/list"
-  },
-  {
-    title: '后台首页',
-    path: "/"
-  },
-  {
-    title: '商城管理',
-    path: "/goods/list"
-  },
-  {
-    title: '后台首页',
-    path: "/"
-  },
-  {
-    title: '商城管理',
-    path: "/goods/list"
-  },
-  {
-    title: '后台首页',
-    path: "/"
-  },
-  {
-    title: '商城管理',
-    path: "/goods/list"
-  },
+const activeTab = ref(route.path)
+const tabList = ref([
   {
     title: '后台首页',
     path: "/"
@@ -82,31 +53,61 @@ const editableTabs = ref([
   },
 
 ])
-const addTab = (targetName) => {
-  const newTabName = `${++tabIndex}`
-  editableTabs.value.push({
-    title: 'New Tab',
-    name: newTabName,
-    content: 'New Tab content',
-  })
-  editableTabsValue.value = newTabName
+//点击标签切换页面
+const changeTab = (t) => {
+  router.push(t)
+  activeTab.value = t
 }
-const removeTab = (targetName) => {
-  const tabs = editableTabs.value
-  let activeName = editableTabsValue.value
-  if (activeName === targetName) {
+
+//刷新初始化标签导航栏
+function initTabList() {
+  let tabs = cookie.get(`tabList`) || [{
+    title: '后台首页',
+    path: "/"
+  }]
+  if (tabs) {
+    tabList.value = tabs
+  }
+}
+initTabList()
+//添加路由方法
+function addTab(tab) {
+  let noTab = tabList.value.findIndex(t => t.path === tab.path)
+  if (noTab === -1) {
+    tabList.value.push(tab)
+    cookie.set(`tabList`, tabList.value)
+  }
+}
+
+//监听路由变化，添加标签
+watch(() => route.path, (path) => {
+  activeTab.value = path
+  //添加路由
+  addTab({
+    title: route.meta.title,
+    path
+  })
+})
+const removeTab = (t) => {
+  let tabs = tabList.value
+  let a = activeTab.value
+  if (a == t) {
     tabs.forEach((tab, index) => {
-      if (tab.name === targetName) {
+      if (tab.path == t) {
         const nextTab = tabs[index + 1] || tabs[index - 1]
         if (nextTab) {
-          activeName = nextTab.name
+          a = nextTab.path
         }
       }
     })
   }
+  //下一个跳转
+  activeTab.value = a
+  //根据当前关闭的路径过滤tab列表，删除关闭项
+  tabList.value = tabList.value.filter(tab => tab.path !== t)
+  //刷新cookie
+  cookie.set(`tabList`, tabList.value)
 
-  editableTabsValue.value = activeName
-  editableTabs.value = tabs.filter((tab) => tab.name !== targetName)
 }
 
 
@@ -134,6 +135,7 @@ const removeTab = (targetName) => {
 
 :deep(.el-tabs__header) {
   @apply mb-0;
+  border: 0 !important;
 }
 
 :deep(.el-tabs__nav) {
