@@ -76,6 +76,7 @@ const removeTab = (targetName) => {
 <style scoped>
 .f-tag-list {
   @apply fixed bg-gray-100 flex items-center px-2;
+  width: 802px;
   top: 64px;
   right: 0;
   z-index: 100;
@@ -84,6 +85,8 @@ const removeTab = (targetName) => {
 
 :deep(.demo-tabs) {
   @apply ml-auto;
+  left: 0;
+  margin: 0 auto;
 }
 
 .tag-btn {
