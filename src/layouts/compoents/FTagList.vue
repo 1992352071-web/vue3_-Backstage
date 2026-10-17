@@ -1,5 +1,5 @@
 <template>
-  <div class="f-tag-list" :style="{ left: '$store.state.asidebarWidth' }">
+  <div class="f-tag-list" :style="{ left: $store.state.asideWidth }">
     <el-tabs v-model="editableTabsValue" type="card" class="demo-tabs" closable @tab-remove="removeTab"
       style="min-width: 100px;">
       <el-tab-pane v-for="item in editableTabs" :key="item.path" :label="item.title" :name="item.path">
@@ -32,6 +32,46 @@ import { ref } from 'vue'
 let tabIndex = 2
 const editableTabsValue = ref('2')
 const editableTabs = ref([
+  {
+    title: '后台首页',
+    path: "/"
+  },
+  {
+    title: '商城管理',
+    path: "/goods/list"
+  },
+  {
+    title: '后台首页',
+    path: "/"
+  },
+  {
+    title: '商城管理',
+    path: "/goods/list"
+  },
+  {
+    title: '后台首页',
+    path: "/"
+  },
+  {
+    title: '商城管理',
+    path: "/goods/list"
+  },
+  {
+    title: '后台首页',
+    path: "/"
+  },
+  {
+    title: '商城管理',
+    path: "/goods/list"
+  },
+  {
+    title: '后台首页',
+    path: "/"
+  },
+  {
+    title: '商城管理',
+    path: "/goods/list"
+  },
   {
     title: '后台首页',
     path: "/"
@@ -76,7 +116,6 @@ const removeTab = (targetName) => {
 <style scoped>
 .f-tag-list {
   @apply fixed bg-gray-100 flex items-center px-2;
-  width: 802px;
   top: 64px;
   right: 0;
   z-index: 100;
@@ -84,9 +123,8 @@ const removeTab = (targetName) => {
 }
 
 :deep(.demo-tabs) {
-  @apply ml-auto;
-  left: 0;
-  margin: 0 auto;
+  flex: 1;
+  min-width: 0;
 }
 
 .tag-btn {
@@ -98,11 +136,11 @@ const removeTab = (targetName) => {
   @apply mb-0;
 }
 
-:deep(.el-tab__nav) {
+:deep(.el-tabs__nav) {
   border: 0 !important;
 }
 
-:deep(.el-tab__item) {
+:deep(.el-tabs__item) {
   border: 0 !important;
   height: 32px;
   line-height: 32px;
@@ -110,8 +148,8 @@ const removeTab = (targetName) => {
 
 }
 
-:deep(.el-tab__nav-next),
-:deep(.el-tab__nav-prev) {
+:deep(.el-tabs__nav-next),
+:deep(.el-tabs__nav-prev) {
   line-height: 32px;
   height: 32px;
 }
