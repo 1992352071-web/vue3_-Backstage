@@ -4,6 +4,7 @@ import { getToken } from '~/composables/auth.js'
 import store from '~/store/index.js'
 import { toast, showFullLoading, hideFullLoading } from '~/composables/util.js'
 //全局前置守卫
+let hasGetInfo = false
 router.beforeEach(async (to, from, next) => {
   // 显示全局loading
   showFullLoading()
@@ -20,7 +21,7 @@ router.beforeEach(async (to, from, next) => {
   }
   //如果已经登录，自动获取用户信息，存储在vuex
   let hasNewRoutes = false
-  if (token) {
+  if (token && !hasGetInfo) {
     let { menus } = await store.dispatch('getinfo')
     //动态添加路由
     hasNewRoutes = addRoutes(menus)
